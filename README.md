@@ -10,3 +10,8 @@ Fungsi `handle_connection` bertugas untuk membaca dan memproses HTTP request yan
 5. Mengumpulkan seluruh String yang sesuai ke dalam suatu Vector String
 6. Mencetak hasilnya (yakni isi dari request tersebut)
 
+## Reflection 2
+### Screenshot browser setelah menambahkan file HTML
+![Commit 2 Screenshot Browser](/assets/images/Commit%202_Browser.jpg)
+### Screenshot terminal setelah menambahkan file HTML
+![Commit 2 Screenshot Browser](/assets/images/Commit%202_Terminal.jpg)
