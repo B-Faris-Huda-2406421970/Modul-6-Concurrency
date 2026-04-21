@@ -34,3 +34,22 @@ Refactoring ini dilakukan untuk menerapkan prinsip Don't Repeat Yourself (DRY). 
 
 ### Screenshot terminal
 ![Commit 3 Screenshot Terminal](/assets/images/Commit%203_Terminal.jpg)
+
+## Reflection 4
+### Bagaimana dan mengapa kode tersebut bekerja seperti itu
+Jika kita mencoba mengakses endpoint /sleep, maka akan ada delay selama 5 detik sebelum halaman (response) dikembalikan oleh server. Cara kerja kode tersebut adalah:
+1. Match mencocokkan bagian kode mana yang akan menjadi status code dan file dari response
+2. Jika ada yang mengakses endpoint /sleep, OS akan menghentikan eksekusi program selama 5 detik (thread sleep) dan tidak memproses baris apapun
+3. Program kembali bangun
+4. Response dikembalikan berupa status code dan file HTML yang akan ditampilkan
+
+Jika kita mengakses endpoint /sleep terlebih dahulu, lalu mengakses endpoint lain di tab baru (misal endpoint root /), maka tab baru tersebut juga ikut terkena imbasnya. Ini bisa menjadi masalah karena menyebabkan tab lain yang tidak mengakses endpoint tersebut ikut terkena delay yang tidak diinginkan. Hal ini disebabkan oleh server kita masih bersifat single-threaded. Sehingga jika thread tersebut dimatikan untuk sementara, maka request yang dihandle oleh client tersebut juga ikut tertunda.
+
+### Screenshot browser untuk endpoint root (/)
+![Commit 4 Screenshot Browser untuk Endpoint Root](/assets/images/Commit%204_Endpoint%20Root.jpg)
+
+### Screenshot browser ketika menunggu response pada endpoint /sleep
+![Commit 4 Screenshot Browser saat Menunggu Response pada Endpoint Sleep](/assets/images/Commit%204_Waiting%20di%20Endpoint%20Sleep.jpg)
+
+### Screenshot browser setelah mendapatkan response pada endpoint /sleep
+![Commit 4 Screenshot Browser saat Mendapatkan Response pada Endpoint Sleep](/assets/images/Commit%204_Endpoint%20Sleep.jpg)
