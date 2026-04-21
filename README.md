@@ -53,3 +53,27 @@ Jika kita mengakses endpoint /sleep terlebih dahulu, lalu mengakses endpoint lai
 
 ### Screenshot browser setelah mendapatkan response pada endpoint /sleep
 ![Commit 4 Screenshot Browser saat Mendapatkan Response pada Endpoint Sleep](/assets/images/Commit%204_Endpoint%20Sleep.jpg)
+
+## Reflection 5
+### Cara kerja ThreadPool di kode tersebut
+1. Inisialisasi 
+- ThreadPool dibuat dengan size 4
+- ThreadPool membuat channel `mpsc` (multiple producer, single consumer)
+- `Receiver` dibungkus dengan `Mutex` agar tidak terjadi race condition
+- Thread-thread yang dibuat masuk dalam kondisi standby di dalam suatu loop
+
+2. Antrian tugas
+- Browser mengirim suatu request dan diterima oleh main thread
+- Main thread membungkusnya menjadi `Job` (suatu `Box` atau pointer memori) dan dikirim ke `Sender`
+- `Sender` mengirimkannya ke `channel`
+- Main thread kembali jalan dan menunggu (listening) request yang akan diterima
+
+3. Eksekusi oleh `Worker`
+- `Worker` akan mencoba mengunci `receiver` menggunakan `.lock()`. Jika tugas ada di `channel`, salah satu `worker` akan mengambilnya
+- Setelah diambil, kunci `Mutex` dilepas agar `worker` lain bisa mengambil tugas berikutnya
+- Pekerja menjalankan tugas `job()`
+- Worker kembali ke antrian `Receiver`
+
+Dengan sistem ThreadPool ini, main thread hanya bertugas untuk memberikan tugas kepada `worker` atau thread-thread yang mengerjakan tugas tersebut. Karena yang bertugas adalah `worker`, kita tidak lagi mengalami delay beruntun akibat endpoint `/sleep` tadi pada tab yang berbeda.
+
+Notes: Beberapa browser mengeksekusi instances dari request yang sama secara berurutan (sekuensial) karena alasan caching. Oleh karena itu, jika kita mencoba untuk mengakses endpoint `/sleep` pada beberapa tab, loadingnya akan dilakukan satu per satu salam interval 5 detik. Masalah tersebut bukan disebabkan oleh server yang kita buat, melainkan oleh browser kita.
