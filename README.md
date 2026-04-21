@@ -77,3 +77,7 @@ Jika kita mengakses endpoint /sleep terlebih dahulu, lalu mengakses endpoint lai
 Dengan sistem ThreadPool ini, main thread hanya bertugas untuk memberikan tugas kepada `worker` atau thread-thread yang mengerjakan tugas tersebut. Karena yang bertugas adalah `worker`, kita tidak lagi mengalami delay beruntun akibat endpoint `/sleep` tadi pada tab yang berbeda.
 
 Notes: Beberapa browser mengeksekusi instances dari request yang sama secara berurutan (sekuensial) karena alasan caching. Oleh karena itu, jika kita mencoba untuk mengakses endpoint `/sleep` pada beberapa tab, loadingnya akan dilakukan satu per satu salam interval 5 detik. Masalah tersebut bukan disebabkan oleh server yang kita buat, melainkan oleh browser kita.
+
+## Bonus Reflection
+### Perbandingan menggunakan `build` dengan `new`
+Perbedaannya adalah pada penanganan error yang dilakukan. Pada `new`, kita menggunakan `assert!` yang mana akan mengecek apakah `size` > 0. Jika tidak, maka program akan panic (crash). Sedangkan pada `build`, kita mengembalikan suatu error `Err` yang memberikan kita pesan dimana letak kesalahan tersebut. `new` digunakan jika fungsi yang akan digunakan pasti akan menerima argumen valid (misal hardcoded). `build` digunakan jika fungsi bisa saja menerima argumen yang menyebabkan error (misal `size` = 0 pada ThreadPool) agar aplikasi menjadi resilient terhadap error.
